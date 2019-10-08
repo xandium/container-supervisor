@@ -46,6 +46,12 @@ export class Supervisor {
       this.websocket.removeAllListeners();
       this.openWebsocket();
     });
+
+    this.websocket.on("error", (code: number, reason: string) => {
+      console.log(`Websocket error: code: ${code} - reason: ${reason}`);
+      this.websocket.removeAllListeners();
+      this.openWebsocket();
+    });
   }
 
   async stopBot() {
