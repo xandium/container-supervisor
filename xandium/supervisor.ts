@@ -25,6 +25,10 @@ export class Supervisor {
     this.botActive = false;
     this.lockExists = fs.existsSync("manager.lock");
 
+    this.openWebsocket();
+  }
+
+  openWebsocket() {
     this.websocket = new WebSocket("ws://localhost:8000");
 
     this.websocket.on("open", () => {
@@ -36,6 +40,12 @@ export class Supervisor {
     this.websocket.on("message", (message: string) =>
       this.processMessage(message)
     );
+
+    this.websocket.on("close", (code: number, reason: string) => {
+      console.log(`Websocket close: code: ${code} - reason: ${reason}`);
+      this.websocket.removeAllListeners();
+      this.openWebsocket();
+    });
   }
 
   async stopBot() {
