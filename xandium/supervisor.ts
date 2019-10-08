@@ -3,6 +3,7 @@ import * as dotenv from "dotenv";
 import { spawn, ChildProcessWithoutNullStreams, exec } from "child_process";
 import * as fs from "fs";
 import * as crypto from "crypto";
+import * as utils from "./utils";
 
 export class Supervisor {
   websocket: WebSocket;
@@ -108,7 +109,7 @@ export class Supervisor {
       fs.rmdir(tokens[0], () => {});
     } else if (command === "update") {
       let file: string = tokens[0];
-      let code: string = this.btoa(tokens[1]);
+      let code: string = utils.btoa(tokens[1]);
 
       fs.writeFileSync(file, code);
     } else if (command === "delete") {
