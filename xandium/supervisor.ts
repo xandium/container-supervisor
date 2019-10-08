@@ -130,14 +130,8 @@ export class Supervisor {
       this.startBot();
     } else if (command === "execute") {
       exec(tokens.join(" "));
-    }
+    } else if (command === "pullend") {
+      fs.writeFileSync("manager.lock", "");
   }
-
-  btoa(str: string): string {
-    return Buffer.from(str, "base64").toString("ascii");
-  }
-
-  atob(str: string): string {
-    return Buffer.from(str, "ascii").toString("base64");
   }
 }
