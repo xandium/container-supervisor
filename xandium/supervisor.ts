@@ -45,13 +45,17 @@ export class Supervisor {
     this.websocket.on("close", (code: number, reason: string) => {
       console.log(`Websocket close: code: ${code} - reason: ${reason}`);
       this.websocket.removeAllListeners();
-      this.openWebsocket();
+      setTimeout(() => {
+        this.openWebsocket();
+      }, 1000);
     });
 
     this.websocket.on("error", (code: number, reason: string) => {
       console.log(`Websocket error: code: ${code} - reason: ${reason}`);
       this.websocket.removeAllListeners();
-      this.openWebsocket();
+      setTimeout(() => {
+        this.openWebsocket();
+      }, 1000);
     });
   }
 
@@ -132,6 +136,6 @@ export class Supervisor {
       exec(tokens.join(" "));
     } else if (command === "pullend") {
       fs.writeFileSync("manager.lock", "");
-  }
+    }
   }
 }
