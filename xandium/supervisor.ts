@@ -2,7 +2,6 @@ import * as WebSocket from "ws";
 import * as dotenv from "dotenv";
 import { spawn, ChildProcessWithoutNullStreams, exec } from "child_process";
 import * as fs from "fs";
-import * as crypto from "crypto";
 import * as utils from "./utils";
 
 export class Supervisor {
@@ -70,7 +69,13 @@ export class Supervisor {
   }
 
   async startBot() {
-    this.botProcess = spawn(this.runCommand, this.runArgs);
+    try {
+      this.botProcess = spawn(this.runCommand, this.runArgs);
+    } catch (err) {
+      console.log(`Error starting bot: ${err}`);
+      this.websocket.send(`log Error starting bot: ${err}`);
+      return;
+    }
 
     this.botActive = true;
 
@@ -85,6 +90,9 @@ export class Supervisor {
     this.botProcess.on("exit", code => {
       console.log(`child process exited with code ${code}`);
       this.botActive = false;
+      this.botProcess.removeAllListeners();
+      this.botProcess.unref();
+      this.botProcess = undefined;
     });
   }
 
@@ -100,6 +108,9 @@ export class Supervisor {
     } else if (command === "ERROR") {
       console.log(`MGR> Error over websocket - ${tokens.join(" ")}`);
       process.exit();
+    } else if (command === "command") {
+      this.runCommand = tokens.shift();
+      this.runArgs = tokens;
     } else if (command === "kill") {
       process.exit();
     } else if (command === "stop") {
